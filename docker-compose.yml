@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  open-deep-research:
+    build: .
+    ports:
+      - "2024:2024"
+    environment:
+      # API Keys - Set these in your .env file
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGSMITH_PROJECT=${LANGSMITH_PROJECT:-open-deep-research}
+      # Disable custom auth for local dev
+      - LANGGRAPH_AUTH=
+      # Use local SQLite DB for LangGraph API server
+      - DATABASE_URI=sqlite:////app/data/langgraph.db
+      
+      # Optional: Other API keys for different providers
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - EXA_API_KEY=${EXA_API_KEY}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      
+      # LangGraph configuration
+      - LANGGRAPH_HOST=0.0.0.0
+      - LANGGRAPH_PORT=2024
+    volumes:
+      # Mount .env file if it exists
+      - ./.env:/app/.env:ro
+      # Optional: Mount output directory for persistent results
+      - ./output:/app/output
+      # Persist local sqlite database
+      - ./output:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2024/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a reverse proxy for production deployment
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - open-deep-research
+    restart: unless-stopped
+    profiles:
+      - production

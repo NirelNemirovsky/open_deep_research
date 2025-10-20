@@ -1,0 +1,197 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-deep-research
+  labels:
+    app: open-deep-research
+    component: research-agent
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: open-deep-research
+  template:
+    metadata:
+      labels:
+        app: open-deep-research
+        component: research-agent
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2024"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: open-deep-research
+        image: gcr.io/PROJECT_ID/open-deep-research:latest
+        ports:
+        - containerPort: 2024
+          name: http
+          protocol: TCP
+        env:
+        # Configuration from ConfigMap
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: log_level
+        - name: LANGSMITH_TRACING
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: langsmith_tracing
+        - name: LANGSMITH_PROJECT
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: langsmith_project
+        - name: SUMMARIZATION_MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: summarization_model
+        - name: RESEARCH_MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: research_model
+        - name: COMPRESSION_MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: compression_model
+        - name: FINAL_REPORT_MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: final_report_model
+        - name: SEARCH_API
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: search_api
+        - name: MAX_SEARCH_DEPTH
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: max_search_depth
+        - name: MAX_SEARCH_RESULTS
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: max_search_results
+        - name: MAX_PARALLEL_SEARCHES
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: max_parallel_searches
+        - name: REPORT_FORMAT
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: report_format
+        - name: INCLUDE_SOURCES
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: include_sources
+        - name: INCLUDE_METADATA
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: include_metadata
+        - name: MCP_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: mcp_enabled
+        - name: CORS_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: cors_origins
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: open-deep-research-config
+              key: debug
+        # Secrets
+        - name: GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: google_api_key
+        - name: TAVILY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: tavily_api_key
+        - name: LANGSMITH_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: langsmith_api_key
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: openai_api_key
+              optional: true
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: anthropic_api_key
+              optional: true
+        - name: GROQ_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: groq_api_key
+              optional: true
+        - name: DEEPSEEK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: deepseek_api_key
+              optional: true
+        - name: EXA_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: open-deep-research-secrets
+              key: exa_api_key
+              optional: true
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 2024
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 2024
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: output-volume
+          mountPath: /app/output
+      volumes:
+      - name: output-volume
+        emptyDir: {}
+      restartPolicy: Always

@@ -20,6 +20,32 @@ Deep research has broken out as one of the most popular agent applications. This
 
 ### 🚀 Quickstart
 
+#### Option 1: Docker Deployment (Recommended)
+
+1. Clone the repository:
+```bash
+git clone https://github.com/langchain-ai/open_deep_research.git
+cd open_deep_research
+```
+
+2. Set up your environment variables:
+```bash
+cp env.example .env
+# Edit .env with your API keys
+```
+
+3. Build and run with Docker:
+```bash
+docker-compose up --build
+```
+
+4. Access the application:
+- **🚀 API**: http://localhost:2024
+- **🎨 LangGraph Studio**: https://smith.langchain.com/studio/?baseUrl=http://localhost:2024
+- **📚 API Docs**: http://localhost:2024/docs
+
+#### Option 2: Local Development
+
 1. Clone the repository and activate a virtual environment:
 ```bash
 git clone https://github.com/langchain-ai/open_deep_research.git
@@ -37,7 +63,7 @@ uv pip install -r pyproject.toml
 
 3. Set up your `.env` file to customize the environment variables (for model selection, search tools, and other configuration settings):
 ```bash
-cp .env.example .env
+cp env.example .env
 ```
 
 4. Launch agent with the LangGraph server locally:
@@ -113,6 +139,50 @@ This creates `tests/expt_results/deep_research_bench_model-name.jsonl` with the 
 | Deep Research Bench Submission | [c0a160b](https://github.com/langchain-ai/open_deep_research/commit/c0a160b57a9b5ecd4b8217c3811a14d8eff97f72) | openai:gpt-4.1-nano | openai:gpt-4.1 | openai:gpt-4.1 | $87.83 | 207,005,549 | 0.4344 | [Link](https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6e4766ca-6[…]ons=e6647f74-ad2f-4cb9-887e-acb38b5f73c0&baseline=undefined) |
 
 ### 🚀 Deployments and Usage
+
+#### Docker Deployment
+
+For easy deployment and production use, we recommend using Docker:
+
+```bash
+# Quick start with Docker
+git clone https://github.com/langchain-ai/open_deep_research.git
+cd open_deep_research
+cp env.example .env
+# Edit .env with your API keys
+docker-compose up --build
+```
+
+See the [Docker Deployment Guide](DOCKER.md) for detailed instructions, including:
+- Local Docker development and testing
+- Environment configuration
+- Monitoring and health checks
+- Security considerations
+- Troubleshooting common issues
+
+#### Google Kubernetes Engine (GKE) Deployment
+
+For production deployment on Google Cloud Platform:
+
+```bash
+# Quick start with GKE
+git clone https://github.com/langchain-ai/open_deep_research.git
+cd open_deep_research
+cp env.example .env
+# Edit .env with your API keys
+
+# Create secrets and deploy to GKE
+./scripts/create-k8s-secrets.sh
+./scripts/build-and-push.sh YOUR_PROJECT_ID
+./scripts/deploy-to-gke.sh YOUR_PROJECT_ID
+```
+
+See the [GKE Deployment Guide](docs/GKE_DEPLOYMENT.md) for comprehensive instructions, including:
+- GCP project setup and cluster creation
+- Kubernetes secrets management
+- Production deployment and scaling
+- Monitoring and troubleshooting
+- Cost optimization strategies
 
 #### LangGraph Studio
 

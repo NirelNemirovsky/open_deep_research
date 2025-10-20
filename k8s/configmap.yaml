@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: open-deep-research-config
+  labels:
+    app: open-deep-research
+    component: research-agent
+data:
+  # Logging Configuration
+  log_level: "INFO"
+  debug: "false"
+  
+  # LangSmith Configuration
+  langsmith_tracing: "true"
+  langsmith_project: "open-deep-research"
+  
+  # Model Configuration
+  summarization_model: "google:gemini-2.5-flash"
+  research_model: "google:gemini-2.5-flash"
+  compression_model: "google:gemini-2.5-flash"
+  final_report_model: "google:gemini-2.5-flash"
+  
+  # Search Configuration
+  search_api: "tavily"
+  max_search_depth: "3"
+  max_search_results: "10"
+  max_parallel_searches: "5"
+  
+  # Report Configuration
+  report_format: "markdown"
+  include_sources: "true"
+  include_metadata: "true"
+  
+  # MCP Configuration
+  mcp_enabled: "false"
+  mcp_servers: ""
+  
+  # CORS Configuration
+  cors_origins: "http://localhost:3000,http://localhost:2024"
+  
+  # Server Configuration
+  langgraph_host: "0.0.0.0"
+  langgraph_port: "2024"

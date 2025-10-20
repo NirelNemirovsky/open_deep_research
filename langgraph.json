@@ -8,7 +8,5 @@
     "dependencies": [
       "."
     ],
-    "auth": {
-      "path": "./src/security/auth.py:auth"
-    }
+    "health_check_path": "/health"
 }

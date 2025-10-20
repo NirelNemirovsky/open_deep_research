@@ -36,8 +36,8 @@ class Configuration:
     search_api: SearchAPI = SearchAPI.TAVILY
     search_api_config: Optional[Dict[str, Any]] = None
     process_search_results: Literal["summarize", "split_and_rerank"] | None = None
-    summarization_model_provider: str = "openai"
-    summarization_model: str = "gpt-4.1"
+    summarization_model_provider: str = "google"
+    summarization_model: str = "gemini-2.5-flash"
     max_structured_output_retries: int = 3
     include_source_str: bool = False
     
@@ -47,8 +47,8 @@ class Configuration:
     planner_provider: str = "anthropic"
     planner_model: str = "claude-3-7-sonnet-latest"
     planner_model_kwargs: Optional[Dict[str, Any]] = None
-    writer_provider: str = "openai"
-    writer_model: str = "gpt-4.1"
+    writer_provider: str = "google"
+    writer_model: str = "gemini-2.5-flash"
     writer_model_kwargs: Optional[Dict[str, Any]] = None
 
     @classmethod
@@ -73,8 +73,8 @@ class MultiAgentConfiguration:
     search_api: SearchAPI = SearchAPI.TAVILY
     search_api_config: Optional[Dict[str, Any]] = None
     process_search_results: Literal["summarize", "split_and_rerank"] | None = None
-    summarization_model_provider: str = "openai"
-    summarization_model: str = "gpt-4.1"
+    summarization_model_provider: str = "google"
+    summarization_model: str = "gemini-2.5-flash"
     include_source_str: bool = False
     
     # Multi-agent specific configuration
